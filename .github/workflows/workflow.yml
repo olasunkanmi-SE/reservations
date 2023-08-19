@@ -22,7 +22,6 @@ jobs:
           npm i
           npm run build
           npm run test:unit
-          npm run test:cov
           npm run format
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
