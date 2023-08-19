@@ -73,7 +73,7 @@ export abstract class GenericDocumentRepository<TEntity, T extends Document> imp
     return Result.ok(entity);
   }
 
-  async upsert(filterQuery: FilterQuery<T>, document: Partial<T>): Promise<TEntity | any> {
+  async upsert(filterQuery: FilterQuery<T>, document: Partial<T>): Promise<any> {
     const result = await this.DocumentModel.findOneAndUpdate(filterQuery, document, {
       lean: true,
       upsert: true,
