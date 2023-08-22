@@ -99,7 +99,7 @@ export class AuthService {
     userId: Types.ObjectId,
     refreshToken: string
   ): Promise<{ accessToken: string }> {
-    const result: Result<any | null> = await model.findById(userId);
+    const result: Result<any> = await model.findById(userId);
 
     if (result.isSuccess === false) {
       throwApplicationError(HttpStatus.FORBIDDEN, "Access denied");
@@ -133,7 +133,7 @@ export class AuthService {
    * @memberof AuthService
    */
   protected async nullifyRefreshToken(model: GenericDocumentRepository<any, any>, userId: Types.ObjectId) {
-    const docResult: Result<any | null> = await model.findById(userId);
+    const docResult: Result<any> = await model.findById(userId);
 
     if (docResult) {
       await model.findOneAndUpdate(
@@ -154,7 +154,7 @@ export class AuthService {
    * @memberof AuthService
    */
   protected async logOut(model: GenericDocumentRepository<any, any>, userId: Types.ObjectId) {
-    let result: Result<any | null> = await model.findById(userId);
+    let result: Result<any> = await model.findById(userId);
 
     if (result.isSuccess === false) {
       throwApplicationError(HttpStatus.NOT_FOUND, "User does not exist");
