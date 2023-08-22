@@ -1,13 +1,13 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
-import { Types } from 'mongoose';
-import { GenericDocumentRepository } from '../database';
-import { throwApplicationError } from '../utilities/exception-instance';
-import { saltRounds } from './../../application/constants/constants';
-import { Result } from './../../domain/result/result';
-import { IJwtPayload, ISignUpTokens, IUserPayload } from './interfaces/auth.interface';
+import { HttpStatus, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
+import { Types } from "mongoose";
+import { GenericDocumentRepository } from "../../../../libs/shared-kernel/src/infrastructure/database";
+import { throwApplicationError } from "../utilities/exception-instance";
+import { saltRounds } from "./../../application/constants/constants";
+import { Result } from "../../../../libs/shared-kernel/src/domain/result/result";
+import { IJwtPayload, ISignUpTokens, IUserPayload } from "./interfaces/auth.interface";
 
 /**
  *Authentication service class
@@ -54,8 +54,8 @@ export class AuthService {
    */
   protected async signAccessToken(jwtPayload: IJwtPayload): Promise<string> {
     return this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+      secret: this.configService.get<string>("JWT_ACCESS_TOKEN_SECRET"),
+      expiresIn: this.configService.get<string>("JWT_ACCESS_TOKEN_EXPIRATION_TIME"),
     });
   }
 
@@ -68,8 +68,8 @@ export class AuthService {
    */
   protected async signRefreshToken(jwtPayload: IJwtPayload): Promise<string> {
     return this.jwtService.signAsync(jwtPayload, {
-      secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+      secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
+      expiresIn: this.configService.get<string>("JWT_REFRESH_TOKEN_EXPIRATION_TIME"),
     });
   }
 
@@ -97,19 +97,19 @@ export class AuthService {
   protected async updateRefreshToken(
     model: GenericDocumentRepository<any, any>,
     userId: Types.ObjectId,
-    refreshToken: string,
+    refreshToken: string
   ): Promise<{ accessToken: string }> {
     const result: Result<any | null> = await model.findById(userId);
 
     if (result.isSuccess === false) {
-      throwApplicationError(HttpStatus.FORBIDDEN, 'Access denied');
+      throwApplicationError(HttpStatus.FORBIDDEN, "Access denied");
     }
     const userEntity = await result.getValue();
     const { refreshTokenHash, role, email } = userEntity;
     const verifyToken = await bcrypt.compare(refreshToken, refreshTokenHash);
 
     if (!verifyToken) {
-      throwApplicationError(HttpStatus.FORBIDDEN, 'Access denied');
+      throwApplicationError(HttpStatus.FORBIDDEN, "Access denied");
       this.nullifyRefreshToken(model, userId);
     }
 
@@ -140,7 +140,7 @@ export class AuthService {
         {
           _id: userId,
         },
-        { refreshTokenHash: null },
+        { refreshTokenHash: null }
       );
     }
   }
@@ -157,7 +157,7 @@ export class AuthService {
     let result: Result<any | null> = await model.findById(userId);
 
     if (result.isSuccess === false) {
-      throwApplicationError(HttpStatus.NOT_FOUND, 'User does not exist');
+      throwApplicationError(HttpStatus.NOT_FOUND, "User does not exist");
     }
     const user = await result.getValue();
 
@@ -166,10 +166,10 @@ export class AuthService {
         {
           _id: userId,
         },
-        { refreshTokenHash: null },
+        { refreshTokenHash: null }
       );
       if (result.isSuccess === false) {
-        throwApplicationError(HttpStatus.INTERNAL_SERVER_ERROR, 'Unable to update data');
+        throwApplicationError(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to update data");
       }
     }
   }

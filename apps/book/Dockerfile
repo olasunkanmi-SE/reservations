@@ -24,9 +24,3 @@ RUN npm install --prod
 COPY --from=development /usr/src/app ./dist
 
 CMD ["node", "dist/apps/book/main"]
-
-
-
-
-
-
