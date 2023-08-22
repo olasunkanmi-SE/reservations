@@ -1,16 +1,15 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Inject } from '@nestjs/common';
-import { Request } from 'express';
-import * as fs from 'fs';
-import { TYPES } from '../../application/constants';
-import { IContextAwareLogger } from '../logger';
-import { APIResponseMessage } from './../../application/constants/constants';
-import { IExceptionResponse, IRequestException } from './exception-response.interface';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Inject } from "@nestjs/common";
+import { Request } from "express";
+import * as fs from "fs";
+import { IContextAwareLogger } from "../logger";
+import { IExceptionResponse, IRequestException } from "./exception-response.interface";
+import { APIResponseMessage, TYPES } from "apps/book/src/constants/contstants";
 
 @Catch()
 export class ApplicationExceptionsFilter implements ExceptionFilter {
   constructor(
     @Inject(TYPES.IApplicationLogger)
-    private readonly logger: IContextAwareLogger,
+    private readonly logger: IContextAwareLogger
   ) {}
   catch(exception: any, host: ArgumentsHost) {
     const context = host.switchToHttp();
@@ -18,7 +17,7 @@ export class ApplicationExceptionsFilter implements ExceptionFilter {
     const request = context.getRequest();
     const { body } = request;
     let props: any;
-    if (Object.hasOwnProperty.call(body, 'password')) {
+    if (Object.hasOwnProperty.call(body, "password")) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...prop } = body;
       props = prop;
@@ -31,7 +30,7 @@ export class ApplicationExceptionsFilter implements ExceptionFilter {
       path: request.originalUrl,
       timeStamp: new Date().toISOString(),
       method: request.method,
-      body: Object.hasOwnProperty.call(body, 'password') ? props : body,
+      body: Object.hasOwnProperty.call(body, "password") ? props : body,
     };
     this.logErrorMessage(request, JSON.stringify(responseBody), statusCode, exception);
     const errorLog: string = this.constructErrorMessage(responseBody, request, exception);
@@ -59,12 +58,12 @@ export class ApplicationExceptionsFilter implements ExceptionFilter {
       this.logger.error(
         `End Request for ${request.path}`,
         `method=${request.method} statusCode=${statusCode} message=${message}`,
-        exception.stack ?? '',
+        exception.stack ?? ""
       );
     }
     this.logger.warn(
       `End Request for ${request.path}`,
-      `method=${request.method} statusCode=${statusCode} message=${message}`,
+      `method=${request.method} statusCode=${statusCode} message=${message}`
     );
   }
 
@@ -78,7 +77,7 @@ export class ApplicationExceptionsFilter implements ExceptionFilter {
   }
 
   private writeErrorLogToFile(errorLog: string): void {
-    fs.appendFile('error.log', errorLog, 'utf8', (err) => {
+    fs.appendFile("error.log", errorLog, "utf8", (err) => {
       if (err) throw err;
     });
   }
