@@ -7,9 +7,10 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { UserDataModel, UserSchema } from "./schema/user.schema";
 import { UserMapper } from "./user.mapper";
 import { AuditMapper } from "@app/shared-kernel/application/audit";
+import { DatabaseModule } from "@app/shared-kernel";
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: UserDataModel.name, schema: UserSchema }])],
+  imports: [DatabaseModule, MongooseModule.forFeature([{ name: UserDataModel.name, schema: UserSchema }])],
   controllers: [UsersController],
   providers: [UsersService, { provide: TYPES.IUserRepository, useClass: UserRepository }, UserMapper, AuditMapper],
 })
