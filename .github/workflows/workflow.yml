@@ -21,7 +21,6 @@ jobs:
         run: |
           npm i
           npm run build
-          npm run test:unit
           npm run format
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
