@@ -14,6 +14,7 @@ import { UserDataModel, UserSchema } from "apps/auth/src/users/schema/user.schem
 import { UserMapper } from "apps/auth/src/users/user.mapper";
 import { APP_FILTER } from "@nestjs/core";
 import { ApplicationExceptionsFilter } from "@app/shared-kernel/infrastructure/filters";
+import { ApplicationLogger } from "@app/shared-kernel/infrastructure/logger";
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ApplicationExceptionsFilter } from "@app/shared-kernel/infrastructure/f
     BookService,
     { provide: TYPES.IBookRepoitory, useClass: BookRepository },
     { provide: TYPES.IUserRepository, useClass: UserRepository },
+    { provide: TYPES.IApplicationLogger, useClass: ApplicationLogger },
     BookMapper,
     AuditMapper,
     UserMapper,
